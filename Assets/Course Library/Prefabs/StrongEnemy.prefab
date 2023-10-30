@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6952881342325854322}
   - component: {fileID: 9031517547949027774}
   - component: {fileID: 5765094530690479388}
-  - component: {fileID: 29481417736422403}
+  - component: {fileID: 9059055805890922394}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: StrongEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4c97b24d72ebade4d98acaf3b75c90ee, type: 2}
+  - {fileID: 2100000, guid: e6e6f7a3c9f4839409af1eae15839382, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &29481417736422403
+--- !u!114 &9059055805890922394
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

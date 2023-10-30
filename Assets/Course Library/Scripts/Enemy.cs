@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Course_Library.Scripts
 {
-    public class EnemyMovement : MonoBehaviour
+    public class Enemy : MonoBehaviour
     {
         private GameObject _player;
         private Rigidbody _enemyRb;
@@ -35,9 +35,13 @@ namespace Course_Library.Scripts
         {
             if (transform.position.y < FallBound)
             {
-                _spawnManager.ReduceEnemyCount();
                 Destroy(gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            _spawnManager.ReduceEnemyCount();
         }
     }
 }
