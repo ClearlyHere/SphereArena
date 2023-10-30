@@ -15,6 +15,7 @@ namespace Challenge_4.Scripts
 
         private bool _hasDash = true;
         private int _dashCooldown = 3;
+        private ParticleSystem _dashParticles;
 
         private const float DashStrength = 2000;
         private const float NormalStrength = 10; // how hard to hit enemy without powerup
@@ -24,6 +25,7 @@ namespace Challenge_4.Scripts
         {
             _playerRb = GetComponent<Rigidbody>();
             _focalPoint = GameObject.Find("Focal Point");
+            _dashParticles = GameObject.Find("Smoke_Particle").GetComponent<ParticleSystem>();
         }
 
         void Update()
@@ -63,6 +65,7 @@ namespace Challenge_4.Scripts
             if (Input.GetAxis("Dash") > 0 && _hasDash)
             {
                 _playerRb.AddForce(_focalPoint.transform.forward * DashStrength);
+                _dashParticles.Play();
                 _hasDash = false;
                 StartCoroutine(DashCooldown());
             }
