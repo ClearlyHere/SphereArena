@@ -1,34 +1,64 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class SpawnManager : MonoBehaviour
+namespace Course_Library.Scripts
 {
-    [SerializeField] private GameObject enemyPrefab;
-
-    private const float SpawnRange = 9;
-    // Start is called before the first frame update
-    private void Start()
+    public class SpawnManager : MonoBehaviour
     {
-        InstantiateEnemy();
-    }
+        [SerializeField] private GameObject enemyPrefab;
+        [SerializeField] private GameObject powerUp;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        private const float SpawnRange = 9;
+        private int _waveNumber = 1;
+        private int _enemyCount;
 
-    private void InstantiateEnemy()
-    {
-        Instantiate(enemyPrefab, GenerateRandomPosition(), enemyPrefab.transform.rotation);
-    }
+        private void Start()
+        {
+            StartEnemyWave(_waveNumber);
+        }
 
-    private Vector3 GenerateRandomPosition()
-    {
-        float spawnPosX = Random.Range(-SpawnRange, SpawnRange);
-        float spawnPosZ = Random.Range(-SpawnRange, SpawnRange);
-        Vector3 randomPos = new Vector3(spawnPosX, 0, spawnPosZ);
-        return randomPos;
+        // Update is called once per frame
+        void Update()
+        {
+            if (_enemyCount == 0)
+            {
+                StartEnemyWave(_waveNumber);
+            }
+        }
+
+        private void InstantiateEnemy()
+        {
+            Instantiate(enemyPrefab, GenerateRandomPosition(), enemyPrefab.transform.rotation);
+        }
+
+        private void InstantiatePowerUp()
+        {
+            Instantiate(powerUp, GenerateRandomPosition(), powerUp.transform.rotation);
+        }
+
+        private Vector3 GenerateRandomPosition()
+        {
+            float spawnPosX = Random.Range(-SpawnRange, SpawnRange);
+            float spawnPosZ = Random.Range(-SpawnRange, SpawnRange);
+            Vector3 randomPos = new Vector3(spawnPosX, 0, spawnPosZ);
+            return randomPos;
+        }
+
+        private void StartEnemyWave(int waveNumber)
+        {
+            InstantiatePowerUp();
+            for (int i = 0; i < waveNumber; i++)
+            {
+                InstantiateEnemy();
+                _enemyCount++;
+            }
+
+            _waveNumber++;
+        }
+
+        public void ReduceEnemyCount()
+        {
+            _enemyCount--;
+        }
     }
 }
