@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Challenge_4.Scripts
 {
@@ -13,14 +14,19 @@ namespace Challenge_4.Scripts
 
         public int enemyCount;
         public int waveCount = 1;
+        
+        public GameObject player;
+        private Rigidbody _playerRb;
 
-
-        public GameObject player; 
+        private void Start()
+        {
+            _playerRb = player.GetComponent<Rigidbody>();
+        }
 
         // Update is called once per frame
         void Update()
         {
-            enemyCount = GameObject.FindGameObjectsWithTag("Powerup").Length;
+            enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
             if (enemyCount == 0)
             {
@@ -60,12 +66,11 @@ namespace Challenge_4.Scripts
         }
 
         // Move player back to position in front of own goal
-        void ResetPlayerPosition ()
+        private void ResetPlayerPosition ()
         {
             player.transform.position = new Vector3(0, 1, -7);
-            player.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-
+            _playerRb.velocity = Vector3.zero;
+            _playerRb.angularVelocity = Vector3.zero;
         }
 
     }

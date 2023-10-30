@@ -13,6 +13,10 @@ namespace Challenge_4.Scripts
         public GameObject powerupIndicator;
         public int powerUpDuration = 5;
 
+        private bool _hasDash = true;
+        private int _dashCooldown = 3;
+
+        private const float DashStrength = 2000;
         private const float NormalStrength = 10; // how hard to hit enemy without powerup
         private const float PowerupStrength = 25; // how hard to hit enemy with powerup
     
@@ -31,6 +35,7 @@ namespace Challenge_4.Scripts
             // Set powerup indicator position to beneath player
             powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
 
+            Dash();
         }
 
         // If Player collides with powerup, activate powerup
@@ -53,13 +58,29 @@ namespace Challenge_4.Scripts
             powerupIndicator.SetActive(false);
         }
 
+        private void Dash()
+        {
+            if (Input.GetAxis("Dash") > 0 && _hasDash)
+            {
+                _playerRb.AddForce(_focalPoint.transform.forward * DashStrength);
+                _hasDash = false;
+                StartCoroutine(DashCooldown());
+            }
+        }
+        
+        IEnumerator DashCooldown()
+        {
+            yield return new WaitForSeconds(_dashCooldown);
+            _hasDash = true;
+        }
+
         // If Player collides with enemy
         private void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.CompareTag("Enemy"))
             {
                 Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-                Vector3 awayFromPlayer =  transform.position - other.gameObject.transform.position; 
+                Vector3 awayFromPlayer = other.gameObject.transform.position - transform.position; 
            
                 if (hasPowerup) // if have powerup hit enemy with powerup force
                 {
@@ -73,8 +94,6 @@ namespace Challenge_4.Scripts
 
             }
         }
-
-
-
+        
     }
 }

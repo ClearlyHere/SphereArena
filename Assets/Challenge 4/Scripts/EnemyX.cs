@@ -4,13 +4,14 @@ namespace Challenge_4.Scripts
 {
     public class EnemyX : MonoBehaviour
     {
-        public float speed;
+        public float speed = 100;
         private Rigidbody _enemyRb;
         private GameObject _playerGoal;
 
         // Start is called before the first frame update
         void Start()
         {
+            _playerGoal = GameObject.FindGameObjectWithTag("PlayerGoal");
             _enemyRb = GetComponent<Rigidbody>();
         }
 
