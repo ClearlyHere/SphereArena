@@ -5,6 +5,7 @@ namespace Challenge_4.Scripts
     public class EnemyX : MonoBehaviour
     {
         public float speed = 100;
+        private static float _speedModifier = 0.8f;
         private Rigidbody _enemyRb;
         private GameObject _playerGoal;
 
@@ -20,7 +21,7 @@ namespace Challenge_4.Scripts
         {
             // Set enemy direction towards player goal and move there
             Vector3 lookDirection = (_playerGoal.transform.position - transform.position).normalized;
-            _enemyRb.AddForce(lookDirection * (speed * Time.deltaTime));
+            _enemyRb.AddForce(lookDirection * (speed * Time.deltaTime * _speedModifier));
 
         }
 
@@ -38,5 +39,9 @@ namespace Challenge_4.Scripts
 
         }
 
+        public void IncreaseSpeedModifier()
+        {
+            _speedModifier += 0.2f;
+        }
     }
 }

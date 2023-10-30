@@ -7,6 +7,7 @@ namespace Challenge_4.Scripts
     {
         public GameObject enemyPrefab;
         public GameObject powerupPrefab;
+        private EnemyX _enemyX;
 
         private const float SpawnRangeX = 10;
         private const float SpawnZMin = 15; // set min spawn Z
@@ -20,6 +21,7 @@ namespace Challenge_4.Scripts
 
         private void Start()
         {
+            _enemyX = enemyPrefab.GetComponent<EnemyX>();
             _playerRb = player.GetComponent<Rigidbody>();
         }
 
@@ -61,8 +63,8 @@ namespace Challenge_4.Scripts
             }
 
             waveCount++;
+            _enemyX.IncreaseSpeedModifier();
             ResetPlayerPosition(); // put player back at start
-
         }
 
         // Move player back to position in front of own goal
