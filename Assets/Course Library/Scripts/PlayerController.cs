@@ -139,7 +139,6 @@ namespace Course_Library.Scripts
         private IEnumerator RocketsFireRateCountdownRoutine()
         {
             yield return new WaitForSeconds(_rocketsRateFire);
-            rocketRing.SetActive(false);
             _canShoot = true;
         }
 
