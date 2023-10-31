@@ -94,10 +94,6 @@ namespace Course_Library.Scripts
             {
                 PushEnemyAway(collision);
             }
-            else if (collision.gameObject.CompareTag("StrongEnemy") && !_isPoweredUp)
-            {
-                PushPlayerAway(collision);
-            }
         }
         
         IEnumerator RocketsCountdownRoutine()
@@ -137,13 +133,6 @@ namespace Course_Library.Scripts
             Rigidbody enemyRb = collision.gameObject.GetComponent<Rigidbody>();
             Vector3 awayFromPlayer = collision.gameObject.transform.position - transform.position;
             enemyRb.AddForce(awayFromPlayer * PowerUpStrength, ForceMode.Impulse);
-        }
-
-        private void PushPlayerAway(Collision collision)
-        {
-            Rigidbody playerRb = GetComponent<Rigidbody>();
-            Vector3 awayFromEnemy = transform.position - collision.gameObject.transform.position;
-            playerRb.AddForce(awayFromEnemy * PowerUpStrength, ForceMode.Impulse);
         }
 
         private void FollowPlayerRing(GameObject ring)

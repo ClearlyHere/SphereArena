@@ -4,34 +4,34 @@ namespace Course_Library.Scripts
 {
     public class Enemy : MonoBehaviour
     {
-        private GameObject _player;
-        private Rigidbody _enemyRb;
-        private SpawnManager _spawnManager;
+        protected GameObject Player;
+        protected Rigidbody EnemyRb;
+        protected SpawnManager SpawnManager;
         private const float MovementSpeed = 80f;
-
         private const float FallBound = -10f;
+        
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
-            _player = GameObject.FindGameObjectWithTag("Player");
-            _spawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
-            _enemyRb = GetComponent<Rigidbody>();
+            Player = GameObject.FindGameObjectWithTag("Player");
+            SpawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
+            EnemyRb = GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
-        void Update()
+        protected virtual void Update()
         {
             Movement();
             DestroyOnFall();
         }
 
-        void Movement()
+        protected void Movement()
         {
-            Vector3 lookDirection = (_player.transform.position - transform.position).normalized ;
-            _enemyRb.AddForce(lookDirection * MovementSpeed);
+            Vector3 lookDirection = (Player.transform.position - transform.position).normalized ;
+            EnemyRb.AddForce(lookDirection * MovementSpeed);
         }
 
-        void DestroyOnFall()
+        protected void DestroyOnFall()
         {
             if (transform.position.y < FallBound)
             {
@@ -39,9 +39,9 @@ namespace Course_Library.Scripts
             }
         }
 
-        private void OnDestroy()
+        protected void OnDestroy()
         {
-            _spawnManager.ReduceEnemyCount();
+            SpawnManager.ReduceEnemyCount();
         }
     }
 }
