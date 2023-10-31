@@ -27,8 +27,6 @@ namespace Course_Library.Scripts
                 var enemyPos = transform.position;
                 var playerPos = other.transform.position;
                 var awayFromPlayer = (playerPos - enemyPos).normalized;
-                Debug.Log("Collision with player");
-                Debug.Log(_playerRb);
                 _playerRb.AddForce(awayFromPlayer * EnemyStrength, ForceMode.Impulse);
             }
         }

@@ -9,8 +9,8 @@ TagManager:
   - SpawnManager
   - Powerup
   - PlayerGoal
-  - StrongEnemy
   - Rockets
+  - Smash
   layers:
   - Default
   - TransparentFX

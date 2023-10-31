@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Course_Library.Scripts
 {
@@ -11,10 +10,12 @@ namespace Course_Library.Scripts
         private PlayerInputs _playerControl;
         private InputAction _playerMove;
         private InputAction _playerFire;
+        private InputAction _playerSmash;
         
         [SerializeField] private GameObject powerRing;
         [SerializeField] private GameObject rocketRing;
-        [FormerlySerializedAs("missile")] [SerializeField] private GameObject missilePrefab;
+        [SerializeField] private GameObject smashRing;
+        [SerializeField] private GameObject missilePrefab;
         
         private Vector3 _moveDirection = Vector3.zero;
         private const float MoveSpeed = 100f;
@@ -27,7 +28,15 @@ namespace Course_Library.Scripts
         private bool _canShoot;
         private float _rocketsDuration = 5f;
         private float _rocketsRateFire = 0.5f;
-        
+
+        private bool _hasSmash;
+        private float _smashDuration = 3f;
+        private float _smashWindupDuration = 0.5f;
+        private const float SmashDownForce = 2000f;
+        private const float SmashExplosion = 1500f;
+        private const float SmashRadius = 5f;
+        private const float TriggerForce = 10f;
+        private const float VectorWindupModifier = 0.2f;
         
         private void Awake()
         {
@@ -43,6 +52,17 @@ namespace Course_Library.Scripts
             _playerFire = _playerControl.Player.Fire;
             _playerFire.Enable();
             _playerFire.performed += Fire;
+            
+            _playerSmash = _playerControl.Player.Smash;
+            _playerSmash.Enable();
+            _playerSmash.performed += Smash;
+        }
+
+        private void OnDisable()
+        {
+            _playerMove.Disable();
+            _playerFire.Disable();
+            _playerSmash.Disable();
         }
 
         private void Update()
@@ -58,8 +78,9 @@ namespace Course_Library.Scripts
             _playerRb.AddForce(Vector3.right * (MoveSpeed * _moveDirection.x));
             
             // Rings Movement
-            FollowPlayerRing(powerRing);
-            FollowPlayerRing(rocketRing);
+            FollowPlayerRing(powerRing, -0.415f);
+            FollowPlayerRing(rocketRing, -0.415f);
+            FollowPlayerRing(smashRing, 0);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -79,6 +100,13 @@ namespace Course_Library.Scripts
                 rocketRing.gameObject.SetActive(true);
                 StartCoroutine(RocketsCountdownRoutine());
             }
+            else if (other.CompareTag("Smash"))
+            {
+                _hasSmash = true;
+                Destroy(other.gameObject);
+                smashRing.gameObject.SetActive(true);
+                StartCoroutine(SmashCountdownRoutine());
+            }
         }
 
         IEnumerator PowerUpCountdownRoutine()
@@ -94,9 +122,14 @@ namespace Course_Library.Scripts
             {
                 PushEnemyAway(collision);
             }
+
+            if (collision.gameObject.CompareTag("Respawn"))
+            {
+                ExplosiveSmashForce(collision);
+            }
         }
         
-        IEnumerator RocketsCountdownRoutine()
+        private IEnumerator RocketsCountdownRoutine()
         {
             yield return new WaitForSeconds(_rocketsDuration);
             rocketRing.SetActive(false);
@@ -106,7 +139,15 @@ namespace Course_Library.Scripts
         private IEnumerator RocketsFireRateCountdownRoutine()
         {
             yield return new WaitForSeconds(_rocketsRateFire);
+            rocketRing.SetActive(false);
             _canShoot = true;
+        }
+
+        private IEnumerator SmashCountdownRoutine()
+        {
+            yield return new WaitForSeconds(_smashDuration);
+            smashRing.SetActive(false);
+            _hasSmash = false;
         }
 
         private void Fire(InputAction.CallbackContext context)
@@ -128,6 +169,45 @@ namespace Course_Library.Scripts
             }
         }
 
+        private void Smash(InputAction.CallbackContext context)
+        {
+            if (_hasSmash)
+            {
+                _hasSmash = false;
+                smashRing.SetActive(false);
+                StartCoroutine(SmashWindupDuration());
+            }
+        }
+
+        IEnumerator SmashWindupDuration()
+        {
+            for (float t = 0f; t < _smashWindupDuration; t += Time.deltaTime)
+            {
+                var transform1 = transform;
+                var playerPosition = transform1.position;
+                transform1.position = new Vector3(playerPosition.x, playerPosition.y + VectorWindupModifier, playerPosition.z);
+                yield return null;
+            }
+
+            _playerRb.AddForce(Vector3.down * SmashDownForce, ForceMode.Impulse);
+        }
+
+        private void ExplosiveSmashForce(Collision collision)
+        {
+            if (collision.relativeVelocity.magnitude >= TriggerForce)
+            {
+                var surroundingEnemies = Physics.OverlapSphere(transform.position, SmashRadius);
+                foreach (var enemy in surroundingEnemies)
+                {
+                    if (enemy.CompareTag("Enemy"))
+                    {
+                        var enemyRb = enemy.GetComponent<Rigidbody>();
+                        enemyRb.AddExplosionForce(SmashExplosion, transform.position, SmashRadius, 1, ForceMode.Impulse);
+                    }
+                }
+            }
+        }
+
         private void PushEnemyAway(Collision collision)
         {
             Rigidbody enemyRb = collision.gameObject.GetComponent<Rigidbody>();
@@ -135,11 +215,11 @@ namespace Course_Library.Scripts
             enemyRb.AddForce(awayFromPlayer * PowerUpStrength, ForceMode.Impulse);
         }
 
-        private void FollowPlayerRing(GameObject ring)
+        private void FollowPlayerRing(GameObject ring, float offsetYPosition)
         {
             Vector3 position = transform.position;
             ring.gameObject.transform.position =
-                new Vector3(position.x, position.y - 0.415f, position.z);
+                new Vector3(position.x, position.y + offsetYPosition, position.z);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Course_Library.Scripts
         [SerializeField] private GameObject strongEnemyPrefab;
         [SerializeField] private GameObject powerUp;
         [SerializeField] private GameObject rocketsPickup;
+        [SerializeField] private GameObject smashPickup;
 
         private const float SpawnRange = 9;
         private int _waveNumber = 1;
@@ -49,6 +50,11 @@ namespace Course_Library.Scripts
             Instantiate(rocketsPickup, GenerateRandomPosition(), powerUp.transform.rotation);
         }
 
+        private void InstantiateSmashPickup()
+        {
+            Instantiate(smashPickup, GenerateRandomPosition(), smashPickup.transform.rotation);
+        }
+
         private Vector3 GenerateRandomPosition()
         {
             float spawnPosX = Random.Range(-SpawnRange, SpawnRange);
@@ -70,12 +76,17 @@ namespace Course_Library.Scripts
                 _enemyCount++;
             }
 
+            if (waveNumber > 3)
+            {
+                InstantiateSmashPickup();
+            }
+
             if (waveNumber > 5)
             {
                 InstantiateRocketsPickup();
             }
 
-            IncreaseStrongOnWave(waveNumber, 3);
+            IncreaseStrongOnWaveModulo(waveNumber, 3);
             InstantiatePowerUp();
             _waveNumber++;
         }
@@ -85,7 +96,7 @@ namespace Course_Library.Scripts
             _enemyCount--;
         }
 
-        private void IncreaseStrongOnWave(int waveNumber, int modulo)
+        private void IncreaseStrongOnWaveModulo(int waveNumber, int modulo)
         {
             if (waveNumber % modulo == 0)
             {
