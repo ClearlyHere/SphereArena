@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace Course_Library.Scripts
+namespace Course_Library.Scripts.Enemies
 {
     public class Enemy : MonoBehaviour
     {
         protected GameObject Player;
         protected Rigidbody EnemyRb;
         protected SpawnManager SpawnManager;
-        private const float MovementSpeed = 80f;
+        protected const float MovementSpeed = 80f;
         private const float FallBound = -10f;
         
         // Start is called before the first frame update
@@ -25,7 +25,7 @@ namespace Course_Library.Scripts
             DestroyOnFall();
         }
 
-        protected void Movement()
+        protected virtual void Movement()
         {
             Vector3 lookDirection = (Player.transform.position - transform.position).normalized ;
             EnemyRb.AddForce(lookDirection * MovementSpeed);
@@ -39,7 +39,7 @@ namespace Course_Library.Scripts
             }
         }
 
-        protected void OnDestroy()
+        protected virtual void OnDestroy()
         {
             SpawnManager.ReduceEnemyCount();
         }

@@ -8,7 +8,7 @@ namespace Course_Library.Scripts
         private PlayerController _playerController;
         private GameObject _enemy;
         private Rigidbody _enemyRb;
-        private Rigidbody _missileRb;
+        protected Rigidbody MissileRb;
 
         private const float MissileSpeed = 20f;
         private const float MissileStrength = 1000f;
@@ -18,7 +18,7 @@ namespace Course_Library.Scripts
 
         private void Start()
         {
-            _missileRb = GetComponent<Rigidbody>();
+            MissileRb = GetComponent<Rigidbody>();
             _enemyRb = _enemy.GetComponent<Rigidbody>();
         }
 
@@ -35,16 +35,16 @@ namespace Course_Library.Scripts
             }
         }
 
-        private void TargetEnemy(GameObject enemy)
+        protected virtual void TargetEnemy(GameObject enemy)
         {
             var enemyPosition = enemy.transform.position;
             var transform1 = transform;
             var missilePosition = transform1.position;
             var enemyDirection = (enemyPosition - missilePosition).normalized;
             
-            _missileRb.velocity = transform1.forward * MissileSpeed;
+            MissileRb.velocity = transform1.forward * MissileSpeed;
             Quaternion rotation = Quaternion.LookRotation(enemyDirection);
-            _missileRb.MoveRotation(rotation);
+            MissileRb.MoveRotation(rotation);
         }
 
         public void SetEnemyTarget(GameObject enemy)
@@ -52,7 +52,7 @@ namespace Course_Library.Scripts
             _enemy = enemy;
         }
 
-        private void OnCollisionEnter(Collision other)
+        protected virtual void OnCollisionEnter(Collision other)
         {
             if (other.gameObject.CompareTag("Enemy"))
             {
@@ -64,8 +64,8 @@ namespace Course_Library.Scripts
                 StartCoroutine(MissileDuration());
             }
         }
-        
-        IEnumerator MissileDuration()
+
+        protected virtual IEnumerator MissileDuration()
         {
             yield return new WaitForSeconds(_missileDuration);
             Destroy(gameObject);

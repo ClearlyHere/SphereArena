@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Course_Library.Scripts
+namespace Course_Library.Scripts.Enemies
 {
     public class StrongEnemy : Enemy
     {

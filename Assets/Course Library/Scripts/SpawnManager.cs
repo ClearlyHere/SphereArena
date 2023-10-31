@@ -7,6 +7,8 @@ namespace Course_Library.Scripts
     {
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private GameObject strongEnemyPrefab;
+        [SerializeField] private GameObject bossPrefab;
+        
         [SerializeField] private GameObject powerUp;
         [SerializeField] private GameObject rocketsPickup;
         [SerializeField] private GameObject smashPickup;
@@ -40,6 +42,11 @@ namespace Course_Library.Scripts
             Instantiate(strongEnemyPrefab, GenerateRandomPosition(), enemyPrefab.transform.rotation);
         }
 
+        private void InstantiateBoss()
+        {
+            Instantiate(bossPrefab, GenerateRandomPosition() + new Vector3(0, 2, 0), bossPrefab.transform.rotation);
+        }
+
         private void InstantiatePowerUp()
         {
             Instantiate(powerUp, GenerateRandomPosition(), powerUp.transform.rotation);
@@ -54,7 +61,7 @@ namespace Course_Library.Scripts
         {
             Instantiate(smashPickup, GenerateRandomPosition(), smashPickup.transform.rotation);
         }
-
+        
         private Vector3 GenerateRandomPosition()
         {
             float spawnPosX = Random.Range(-SpawnRange, SpawnRange);
@@ -65,23 +72,36 @@ namespace Course_Library.Scripts
 
         private void StartEnemyWave(int waveNumber)
         {
-            if (waveNumber != 1)
+            switch (waveNumber)
             {
-                SpawnStrongEnemiesLoop(_strongEnemySpawns);
-                SpawnEnemiesLoop(waveNumber);
-            }
-            else
-            {
-                InstantiateEnemy();
-                _enemyCount++;
+                case 1:
+                    InstantiateEnemy();
+                    _enemyCount++;
+                    break;
+                case 10:
+                    InstantiateBoss();
+                    _enemyCount++;
+                    break;
+                default:
+                    if (waveNumber > 10)
+                    {
+                        // Nothing more! You beat the boss hurray!
+                        _enemyCount++;
+                    }
+                    else
+                    {
+                        SpawnStrongEnemiesLoop(_strongEnemySpawns);
+                        SpawnEnemiesLoop(waveNumber);
+                    }
+                    break;
             }
 
-            if (waveNumber > 3)
+            if (waveNumber is > 3 or < 11)
             {
                 InstantiateSmashPickup();
             }
 
-            if (waveNumber > 5)
+            if (waveNumber is > 5 or < 11)
             {
                 InstantiateRocketsPickup();
             }
